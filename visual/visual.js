@@ -38,12 +38,12 @@ module.exports = function(RED) {
 		var username,password;
 		var service = req.params.service;
 		
-        	for (var i2=0; i2 < visual.length; i2++) {
-        		if (visual[i2].name===service) {
-        			username = visual[i2].username;
-	        		password = visual[i2].password;
-        		}
-	    	}
+		for (var i2=0; i2 < visual.length; i2++) {
+			if (visual[i2].name===service) {
+				username = visual[i2].username;
+				password = visual[i2].password;
+			}
+		}
 		
 		var visual_recognition = watson.visual_recognition({
 			username: username,
@@ -56,7 +56,7 @@ module.exports = function(RED) {
 			function(err, response) {
 				if (err) {
 					throw(err);
-			 	} else {
+				} else {
 					res.send(JSON.stringify(response));
 				}
 			}
@@ -78,10 +78,10 @@ module.exports = function(RED) {
 
 		this.doDelete = function() {
 			var visual_recognition = watson.visual_recognition({
-			  username: node.username,
-			  password: node.password,
-			  version: 'v2-beta',
-			  version_date: '2015-12-02'
+				username: node.username,
+				password: node.password,
+				version: 'v2-beta',
+				version_date: '2015-12-02'
 			});
 			
 			visual_recognition.deleteClassifier({
@@ -222,12 +222,16 @@ module.exports = function(RED) {
 			var stream_negative = (typeof msg.negative === 'string') ? stream_url : stream_buffer;
 	
 			temp.open({suffix: '.zip'}, function (err, info) {
-				if (err) throw err;
+				if (err) {
+					throw err;
+				}
 				
 				stream_positive(info.path, msg.positive, function () {
 	
 					temp.open({suffix: '.zip'}, function (err2, info2) {
-						if (err2) throw err2;
+						if (err2) {
+							throw err2;
+						}
 	
 						stream_negative(info2.path, msg.negative, function () {
 							node.status({fill:'blue', shape:'dot', text:'requesting'});

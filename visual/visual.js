@@ -44,9 +44,6 @@ module.exports = function(RED) {
 
 		var username,password;
 		var service = req.params.service;
-		console.log('req.param: '+req.param);
-		console.log('req.params: '+req.params);
-		console.log('service: '+service);
 		
         for (var i2=0; i2 < visual.length; i2++) {
         	if (visual[i2].name===service) {
@@ -55,8 +52,6 @@ module.exports = function(RED) {
         	}
     	}
 		
-		console.log("username: "+username);
-		console.log("password: "+password);
 		var visual_recognition = watson.visual_recognition({
 			username: username,
 			password: password,
@@ -67,7 +62,7 @@ module.exports = function(RED) {
 		visual_recognition.listClassifiers({},
 			function(err, response) {
 				if (err) 
-					console.log(err);
+					throw(err);
 			 	else
 					res.send(JSON.stringify(response));
 			}
@@ -147,7 +142,6 @@ module.exports = function(RED) {
 		};
 
 		this.on('input', function (msg) {
-			console.log("Visual command: "+node.command);
 			switch(this.command) {
 				case "list":
 					this.doList(msg);
@@ -214,7 +208,7 @@ module.exports = function(RED) {
 				var wstream = fs.createWriteStream(file);
 				wstream.on('finish', function () {
 					fs.readFile(file, function (err, buf) {
-						if (err) console.error(err);
+						if (err) throw(err);
 						cb(fileType(buf).ext);
 					});
 				});

@@ -120,10 +120,10 @@ module.exports = function(RED) {
 
 		this.doDetails = function() {
 			var visual_recognition = watson.visual_recognition({
-			  username: node.username,
-			  password: node.password,
-			  version: 'v2-beta',
-			  version_date: '2015-12-02'
+				username: node.username,
+				password: node.password,
+				version: 'v2-beta',
+				version_date: '2015-12-02'
 			});
 
 			visual_recognition.getClassifier({
@@ -274,10 +274,10 @@ module.exports = function(RED) {
 //	var service = cfEnv.getAppEnv().getServiceCreds(/visual_recognition/i);
 
 /*
-  	if (service) {
-    	username = service.username;
-    	password = service.password;
-  	}
+	if (service) {
+	 	username = service.username;
+		password = service.password;
+	}
 */  
 	function VisualRecognitionNode(config) {
 
@@ -302,7 +302,7 @@ module.exports = function(RED) {
 				username: node.username,
 				password: node.password,
 				version: 'v2-beta',
-			  	version_date: '2015-12-02'
+			 	version_date: '2015-12-02'
 			});
 
 			var file_extension = function (file) {
@@ -310,15 +310,15 @@ module.exports = function(RED) {
 
 				// For URLs, look for file extension in the path, default to JPEG.
 				if (typeof file === 'string') {
-				var match = file.match(/\.[\w]{3,4}$/i)
-				ext = match && match[0]
+					var match = file.match(/\.[\w]{3,4}$/i);
+					ext = match && match[0];
 				// ...for Buffers, we can look at the file header.
 				} else if (file instanceof Buffer) {
-				ext = '.' + fileType(file).ext;
+					ext = '.' + fileType(file).ext;
 				}
 
 				return ext;
-			}
+			};
 
 			var stream_buffer = function (file, contents, cb) {
 			fs.writeFile(file, contents, function (err) {
@@ -331,15 +331,16 @@ module.exports = function(RED) {
 				var wstream = fs.createWriteStream(file);
 				wstream.on('finish', cb);
 
-				request(location)
-				.pipe(wstream);
+				request(location).pipe(wstream);
 			};
 
 			var stream_payload = (typeof msg.payload === 'string') ? stream_url : stream_buffer;
 //			var stream_classifiers = (typeof msg.classifiers === 'string') ? stream_url : stream_buffer;
 
 			temp.open({suffix: file_extension(msg.payload)}, function (err, info) {
-				if (err) throw err;
+				if (err) {
+					throw err;
+				}
 
 				stream_payload(info.path, msg.payload, function () {
 					node.status({fill:'blue', shape:'dot', text:'requesting'});
@@ -351,10 +352,10 @@ module.exports = function(RED) {
 					visual_recognition.classify(params, 
 						function(err2, response) {
 							node.status({});
-						   	if (err2)
-					    		node.error(err2);
-					    	else
-						   		node.send({'payload': response});
+						 	if (err2) {
+								throw (err2);
+							} 
+					 		node.send({'payload': response});
 						}
 					);
 

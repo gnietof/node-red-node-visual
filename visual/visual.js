@@ -1,11 +1,6 @@
 module.exports = function(RED) {
 
-	var http = require('http');
-	var https = require('https');
-	
 	var cfEnv = require('cfenv');
-	var util = require('util');
-
 	var watson = require('watson-developer-cloud');
 	var temp = require('temp');
 	temp.track();
@@ -43,12 +38,12 @@ module.exports = function(RED) {
 		var username,password;
 		var service = req.params.service;
 		
-        for (var i2=0; i2 < visual.length; i2++) {
-        	if (visual[i2].name===service) {
-        		username = visual[i2].username;
-        		password = visual[i2].password;
-        	}
-    	}
+        	for (var i2=0; i2 < visual.length; i2++) {
+        		if (visual[i2].name===service) {
+        			username = visual[i2].username;
+	        		password = visual[i2].password;
+        		}
+	    	}
 		
 		var visual_recognition = watson.visual_recognition({
 			username: username,
@@ -81,7 +76,7 @@ module.exports = function(RED) {
 
 		var node = this;
 
-		this.doDelete = function(msg) {
+		this.doDelete = function() {
 			var visual_recognition = watson.visual_recognition({
 			  username: node.username,
 			  password: node.password,
@@ -101,7 +96,7 @@ module.exports = function(RED) {
 			);
 		};
 
-		this.doList = function(msg) {
+		this.doList = function() {
 
 			var visual_recognition = watson.visual_recognition({
  
@@ -123,7 +118,7 @@ module.exports = function(RED) {
 
 		};
 
-		this.doDetails = function(msg) {
+		this.doDetails = function() {
 			var visual_recognition = watson.visual_recognition({
 			  username: node.username,
 			  password: node.password,
@@ -182,8 +177,8 @@ module.exports = function(RED) {
 
 			// For URLs, look for file extension in the path, default to JPEG.
 			if (typeof file === 'string') {
-				var match = file.match(/\.[\w]{3,4}$/i)
-				ext = match && match[0]
+				var match = file.match(/\.[\w]{3,4}$/i);
+				ext = match && match[0];
 			// ...for Buffers, we can look at the file header.
 			} else {
 				if (file instanceof Buffer) {
@@ -192,7 +187,7 @@ module.exports = function(RED) {
 			}
 
 			return ext;
-		}
+		};
 */			
 			var visual_recognition = watson.visual_recognition({
 				username: node.username,
@@ -203,7 +198,9 @@ module.exports = function(RED) {
 	
 			var stream_buffer = function (file, contents, cb) {
 				fs.writeFile(file, contents, function (err) {
-					if (err) throw err;
+					if (err) {
+						throw (err);
+					}
 					cb(fileType(contents).ext);
 				});
 			};
@@ -212,7 +209,9 @@ module.exports = function(RED) {
 				var wstream = fs.createWriteStream(file);
 				wstream.on('finish', function () {
 					fs.readFile(file, function (err, buf) {
-						if (err) throw(err);
+						if (err) {
+							throw(err);
+						}
 						cb(fileType(buf).ext);
 					});
 				});
@@ -225,12 +224,12 @@ module.exports = function(RED) {
 			temp.open({suffix: '.zip'}, function (err, info) {
 				if (err) throw err;
 				
-				stream_positive(info.path, msg.positive, function (format) {
+				stream_positive(info.path, msg.positive, function () {
 	
 					temp.open({suffix: '.zip'}, function (err2, info2) {
 						if (err2) throw err2;
 	
-						stream_negative(info2.path, msg.negative, function (format) {
+						stream_negative(info2.path, msg.negative, function () {
 							node.status({fill:'blue', shape:'dot', text:'requesting'});
 							var params = {
 								name: node.classifier,
@@ -325,7 +324,7 @@ module.exports = function(RED) {
 			};
 
 			var stream_url = function (file, location, cb) { 
-				var wstream = fs.createWriteStream(file)
+				var wstream = fs.createWriteStream(file);
 				wstream.on('finish', cb);
 
 				request(location)

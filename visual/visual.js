@@ -287,14 +287,12 @@ module.exports = function(RED) {
 
 		this.on('input', function(msg) {
 			if (!msg.payload) {
-				var message = 'Missing property: msg.payload';
-				node.error(message, msg);
+				node.error('Missing property: msg.payload', msg);
 				return;
 			}
 
 			if (!msg.payload instanceof Buffer || !typeof msg.payload === 'string') {
-				var message = 'Invalid property: msg.payload, must be a URL or a Buffer.';
-				node.error(message, msg);
+				node.error('Invalid property: msg.payload, must be a URL or a Buffer.', msg);
 				return;
 			}
 

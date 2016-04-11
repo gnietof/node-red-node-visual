@@ -89,7 +89,7 @@ module.exports = function(RED) {
 				function(err, response) {
 					if (err) {
 						node.error(err);
-				 	} else {
+					} else {
 						node.send({'payload': response});
 					}	
 				}
@@ -110,7 +110,7 @@ module.exports = function(RED) {
 				function(err, response) {
 					if (err) {
 						node.error(err);
-				 	} else {
+					} else {
 						node.send({'payload': response});
 					}	
 				}
@@ -131,7 +131,7 @@ module.exports = function(RED) {
 				function(err, response) {
 					if (err) {
 						node.error(err);
-				 	} else {
+					} else {
 						node.send({'payload': response});
 					}	
 				}
@@ -171,7 +171,7 @@ module.exports = function(RED) {
 		this.doCall = function(msg) {
 
 /*
- 		var file_extension = function (file) {
+		var file_extension = function (file) {
  
 			var ext = '.jpeg';
 
@@ -275,10 +275,10 @@ module.exports = function(RED) {
 
 /*
 	if (service) {
-	 	username = service.username;
+		username = service.username;
 		password = service.password;
 	}
-*/  
+*/
 	function VisualRecognitionNode(config) {
 
 		RED.nodes.createNode(this,config);
@@ -300,7 +300,7 @@ module.exports = function(RED) {
 				username: node.username,
 				password: node.password,
 				version: 'v2-beta',
-			 	version_date: '2015-12-02'
+				version_date: '2015-12-02'
 			});
 
 			var file_extension = function (file) {
@@ -319,8 +319,10 @@ module.exports = function(RED) {
 			};
 
 			var stream_buffer = function (file, contents, cb) {
-			fs.writeFile(file, contents, function (err) {
-					if (err) throw err;
+				fs.writeFile(file, contents, function (err) {
+					if (err) {
+						throw err;
+					}
 					cb();
 				});
 			};
@@ -350,10 +352,10 @@ module.exports = function(RED) {
 					visual_recognition.classify(params, 
 						function(err2, response) {
 							node.status({});
-						 	if (err2) {
+							if (err2) {
 								throw (err2);
 							} 
-					 		node.send({'payload': response});
+							node.send({'payload': response});
 						}
 					);
 

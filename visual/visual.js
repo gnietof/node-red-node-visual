@@ -3,8 +3,8 @@ module.exports = function(RED) {
 	var http = require('http');
 	var https = require('https');
 	
-	var cfEnv = require("cfenv");
-	var util = require("util");
+	var cfEnv = require('cfenv');
+	var util = require('util');
 
 	var watson = require('watson-developer-cloud');
 	var temp = require('temp');
@@ -33,8 +33,6 @@ module.exports = function(RED) {
 				}
 		}
 
-	util.log("*** VISUAL: "+JSON.stringify(visual));
-
 	// GNF: This method provides service credentials when prompted from the node editor
 	RED.httpAdmin.get('/watson-visual-recognition/vcap', function(req,res) {
 		res.send(JSON.stringify(visual));
@@ -61,10 +59,11 @@ module.exports = function(RED) {
 			
 		visual_recognition.listClassifiers({},
 			function(err, response) {
-				if (err) 
+				if (err) {
 					throw(err);
-			 	else
+			 	} else {
 					res.send(JSON.stringify(response));
+				}
 			}
 		);
 	});
@@ -93,10 +92,11 @@ module.exports = function(RED) {
 			visual_recognition.deleteClassifier({
 				classifier_id: node.classifier },
 				function(err, response) {
-					if (err) 
+					if (err) {
 						node.error(err);
-				 	else
-						node.send({"payload": response});
+				 	} else {
+						node.send({'payload': response});
+					}	
 				}
 			);
 		};
@@ -113,10 +113,11 @@ module.exports = function(RED) {
 			
 			visual_recognition.listClassifiers({},
 				function(err, response) {
-					if (err) 
+					if (err) {
 						node.error(err);
-				 	else
-						node.send({"payload": response});
+				 	} else {
+						node.send({'payload': response});
+					}	
 				}
 			);
 
@@ -133,23 +134,24 @@ module.exports = function(RED) {
 			visual_recognition.getClassifier({
 				classifier_id: node.classifier },
 				function(err, response) {
-					if (err) 
+					if (err) {
 						node.error(err);
-				 	else
-						node.send({"payload": response});
+				 	} else {
+						node.send({'payload': response});
+					}	
 				}
 			);
 		};
 
 		this.on('input', function (msg) {
 			switch(this.command) {
-				case "list":
+				case 'list':
 					this.doList(msg);
 					break;
-				case "details":
+				case 'details':
 					this.doDetails(msg);
 					break;
-				case "delete":
+				case 'delete':
 					this.doDelete(msg);
 					break;
 			}
@@ -157,7 +159,7 @@ module.exports = function(RED) {
 		
 	}
 
-	RED.nodes.registerType("watson-visual-util",VisualUtilNode);
+	RED.nodes.registerType('watson-visual-util',VisualUtilNode);
 
 	function VisualTrainingNode(config) {
 
@@ -183,8 +185,10 @@ module.exports = function(RED) {
 				var match = file.match(/\.[\w]{3,4}$/i)
 				ext = match && match[0]
 			// ...for Buffers, we can look at the file header.
-			} else if (file instanceof Buffer) {
-				ext = '.' + fileType(file).ext;
+			} else {
+				if (file instanceof Buffer) {
+					ext = '.' + fileType(file).ext;
+				}
 			}
 
 			return ext;
@@ -227,7 +231,7 @@ module.exports = function(RED) {
 						if (err2) throw err2;
 	
 						stream_negative(info2.path, msg.negative, function (format) {
-								
+							node.status({fill:'blue', shape:'dot', text:'requesting'});
 							var params = {
 								name: node.classifier,
 								positive_examples: fs.createReadStream(info.path),
@@ -236,10 +240,11 @@ module.exports = function(RED) {
 								
 							visual_recognition.createClassifier(params, 
 								function(err, response) {
+									node.status({});
 									if (err) {
 										node.error(err);
 									} else {
-										node.send({"payload" : response});
+										node.send({'payload' : response});
 									}
 									temp.cleanup();
 								}
@@ -256,7 +261,7 @@ module.exports = function(RED) {
 				
 	}
 
-	RED.nodes.registerType("watson-visual-training",VisualTrainingNode);
+	RED.nodes.registerType('watson-visual-training',VisualTrainingNode);
 	
 // START COPY
 // This is a copy of the original code for the Recognition node to solve a bug
@@ -334,7 +339,7 @@ module.exports = function(RED) {
 				if (err) throw err;
 
 				stream_payload(info.path, msg.payload, function () {
-					node.status({fill:"blue", shape:"dot", text:"requesting"});
+					node.status({fill:'blue', shape:'dot', text:'requesting'});
 					var params = {
 						images_file: fs.createReadStream(info.path),
 						classifier_ids: JSON.stringify(msg.classifiers) //fs.readFileSync('./classifierlist.json')
@@ -346,7 +351,7 @@ module.exports = function(RED) {
 						   	if (err2)
 					    		node.error(err2);
 					    	else
-						   		node.send({"payload": response});
+						   		node.send({'payload': response});
 						}
 					);
 
@@ -355,10 +360,10 @@ module.exports = function(RED) {
 		});
 	}
 	
-	RED.nodes.registerType("watson-visual-recognition2",VisualRecognitionNode, {
+	RED.nodes.registerType('watson-visual-recognition2',VisualRecognitionNode, {
 		credentials: {
-			username: {type:"text"},
-			password: {type:"password"}
+			username: {type:'text'},
+			password: {type:'password'}
 			}
 	});
 }
